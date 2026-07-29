@@ -12,30 +12,29 @@ function seedData(): AssetStoreData {
   return {
     // Real transparent cutouts — each overlays centered on top of the active background.
     creators: [
-      { id: "creator-abu-dakhil", name: "أبو دخيل", imageUrl: `${ASSET_PATHS.creators}/abu-dakhil.png` },
-      { id: "creator-abu-slo", name: "أبو سلو", imageUrl: `${ASSET_PATHS.creators}/abu-slo.png` },
-      { id: "creator-bodi", name: "بودي", imageUrl: `${ASSET_PATHS.creators}/bodi.png` },
-      { id: "creator-thamer", name: "ثامر", imageUrl: `${ASSET_PATHS.creators}/thamer.png` },
-      { id: "creator-dabi", name: "دابي", imageUrl: `${ASSET_PATHS.creators}/dabi.png` },
-      { id: "creator-saeed", name: "سعيد", imageUrl: `${ASSET_PATHS.creators}/saeed.png` },
-      { id: "creator-tarbakh", name: "طرباخ", imageUrl: `${ASSET_PATHS.creators}/tarbakh.png` },
-      { id: "creator-shehri", name: "عبدالرحمن الشهري", imageUrl: `${ASSET_PATHS.creators}/shehri.png` },
-      { id: "creator-faisal", name: "فيصل", imageUrl: `${ASSET_PATHS.creators}/faisal.png` },
-      { id: "creator-ko3ib", name: "كعيب", imageUrl: `${ASSET_PATHS.creators}/ko3ib.png` },
-      { id: "creator-nawaf", name: "نواف", imageUrl: `${ASSET_PATHS.creators}/nawaf.png` },
-      { id: "creator-yazeed", name: "يزيد", imageUrl: `${ASSET_PATHS.creators}/yazeed.png` },
+      { id: "creator-abu-dakhil", name: "أبو دخيل", imageUrl: `${ASSET_PATHS.creators}/ابو دخيل.webp` },
+      { id: "creator-abu-slo", name: "أبو سلو", imageUrl: `${ASSET_PATHS.creators}/ابو سلو.webp` },
+      { id: "creator-bodi", name: "بودي", imageUrl: `${ASSET_PATHS.creators}/بودي.webp` },
+      { id: "creator-thamer", name: "ثامر", imageUrl: `${ASSET_PATHS.creators}/ثامر.webp` },
+      { id: "creator-dabi", name: "دابي", imageUrl: `${ASSET_PATHS.creators}/دابي.webp` },
+      { id: "creator-saeed", name: "سعيد", imageUrl: `${ASSET_PATHS.creators}/سعيد.webp` },
+      { id: "creator-tarbakh", name: "طرباخ", imageUrl: `${ASSET_PATHS.creators}/طرباخ.webp` },
+      { id: "creator-shehri", name: "عبدالرحمن الشهري", imageUrl: `${ASSET_PATHS.creators}/عبدالرحمن الشهري.webp` },
+      { id: "creator-faisal", name: "فيصل", imageUrl: `${ASSET_PATHS.creators}/فيصل.webp` },
+      { id: "creator-ko3ib", name: "كعيب", imageUrl: `${ASSET_PATHS.creators}/كعيب.webp` },
+      { id: "creator-yazeed", name: "يزيد", imageUrl: `${ASSET_PATHS.creators}/يزيد.webp` },
     ],
     backgrounds: [
       {
         id: "bg-header-empty-redsea",
         label: "هيدر — البحر الأحمر",
-        imageUrl: `${ASSET_PATHS.headers}/Red-Sea-Fan-Header-background.jpg`,
+        imageUrl: `${ASSET_PATHS.headers}/Red-Sea-Fan-Header-background.webp`,
         isActive: true,
       },
       {
         id: "bg-header-group-redsea",
         label: "هيدر — جميع صناع المحتوى",
-        imageUrl: `${ASSET_PATHS.headers}/Peaks_Header_RedSeaNew.jpg`,
+        imageUrl: `${ASSET_PATHS.headers}/Peaks_Header_RedSeaNew.webp`,
         isActive: false,
       },
       {
@@ -49,7 +48,7 @@ function seedData(): AssetStoreData {
       {
         id: "frame-pfp-redsea",
         label: "إطار الصورة الشخصية — البحر الأحمر",
-        imageUrl: `${ASSET_PATHS.frames}/Community_PFP.png`,
+        imageUrl: `${ASSET_PATHS.frames}/Community_PFP.webp`,
         isActive: true,
       },
     ],

@@ -14,7 +14,7 @@ export function LandingPage() {
 
       <div className="mx-auto w-full max-w-6xl px-4 sm:px-8">
         <img
-          src="/assets/headers/Peaks_Header_RedSeaNew.jpg"
+          src="/assets/headers/Peaks_Header_RedSeaNew.webp"
           alt="صيفية بيكس — البحر الأحمر"
           className="aspect-[3/1] w-full rounded-3xl object-cover shadow-beach"
         />
