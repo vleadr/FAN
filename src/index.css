@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Cairo", "Segoe UI", Tahoma, sans-serif;
+  --font-sans: "Cairo", "Segoe UI", Tahoma, system-ui, sans-serif;
+
+  --color-sea-50: #eefbfc;
+  --color-sea-100: #d3f4f7;
+  --color-sea-200: #a6e8f0;
+  --color-sea-300: #6cd6e3;
+  --color-sea-400: #34bdd0;
+  --color-sea-500: #189fb4;
+  --color-sea-600: #147f95;
+  --color-sea-700: #14657a;
+  --color-sea-800: #175264;
+  --color-sea-900: #164555;
+  --color-sea-950: #0a2733;
+
+  --color-sand-50: #fdf9ef;
+  --color-sand-100: #faf0d6;
+  --color-sand-200: #f3dda8;
+  --color-sand-300: #ecc571;
+  --color-sand-400: #e6ab45;
+  --color-sand-500: #de8f28;
+  --color-sand-600: #c2711f;
+  --color-sand-700: #a1571d;
+  --color-sand-800: #83461e;
+  --color-sand-900: #6c3b1c;
+
+  --color-coral-400: #ff8b6b;
+  --color-coral-500: #ff6a45;
+  --color-coral-600: #ed4c26;
+
+  --shadow-beach: 0 20px 40px -12px rgba(10, 39, 51, 0.35);
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: linear-gradient(
+    180deg,
+    var(--color-sea-100) 0%,
+    var(--color-sea-50) 40%,
+    var(--color-sand-50) 100%
+  );
+  color: var(--color-sea-950);
+  min-height: 100svh;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+* {
+  box-sizing: border-box;
+}

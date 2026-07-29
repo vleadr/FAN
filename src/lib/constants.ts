@@ -1,0 +1,36 @@
+export const ASSET_PATHS = {
+  headers: "/assets/headers",
+  creators: "/assets/creators",
+  frames: "/assets/frames",
+  branding: "/assets/branding",
+} as const;
+
+/** Matches the real campaign creative's canvas (a 3:1 wide banner). */
+export const HEADER_EXPORT_WIDTH = 6000;
+export const HEADER_EXPORT_HEIGHT = 2000;
+
+/** Square export so the circular PFP crop is unambiguous. */
+export const PFP_EXPORT_SIZE = 2000;
+
+export const NAME_TEXT_DEFAULTS = {
+  // Falls back to a bold Arabic-capable sans-serif until the real "KO Pilot"
+  // font file is dropped into /public/fonts and registered via @font-face
+  // (KO Pilot itself is Latin-only, so names typed in Arabic still need Cairo).
+  fontFamily: '"KO Pilot", "Cairo", "Segoe UI", Tahoma, sans-serif',
+  color: "#ffffff",
+  // Ratio of canvas width, mirrors the ~204px/6000px sizing used in the real creative.
+  fontSizeRatio: 0.075,
+  xNorm: 0.5,
+  yNorm: 0.88,
+} as const;
+
+/**
+ * Non-secure placeholder gate for /admin. Swap login()'s internals for a
+ * real auth check later — the ProtectedRoute contract doesn't need to change.
+ */
+export const ADMIN_PASSWORD = "peaks-summer";
+
+// Bumped when seed data changes shape/content so returning browsers re-seed
+// instead of keeping stale IndexedDB data from an older placeholder version.
+export const ASSET_STORE_KEY = "peaks:assets:v4";
+export const ADMIN_SESSION_KEY = "peaks:admin-session";
