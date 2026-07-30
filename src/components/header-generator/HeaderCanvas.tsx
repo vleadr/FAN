@@ -101,25 +101,6 @@ export const HeaderCanvas = forwardRef<HTMLCanvasElement, HeaderCanvasProps>(
     const backgroundImage = useLoadedImage(backgroundUrl);
     const creatorImage = useLoadedImage(creatorUrl);
 
-    // @font-face alone doesn't reliably fetch a font that's only ever used on
-    // <canvas> (no DOM text triggers it) — force-load it explicitly. The name
-    // text is only ever drawn once this settles (success OR failure), never
-    // before: iOS Safari has canvas text-rasterization bugs when the *same*
-    // canvas redraws text after its font swaps mid-session (fallback → real
-    // font), which showed up as duplicated/ghosted glyphs. Drawing it exactly
-    // once, already on its final font, avoids that swap entirely.
-    const [fontsSettled, setFontsSettled] = useState(false);
-    useEffect(() => {
-      let cancelled = false;
-      const markSettled = () => {
-        if (!cancelled) setFontsSettled(true);
-      };
-      document.fonts.load('900 100px "KO Pilot"').then(markSettled).catch(markSettled);
-      return () => {
-        cancelled = true;
-      };
-    }, []);
-
     useEffect(() => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -155,7 +136,7 @@ export const HeaderCanvas = forwardRef<HTMLCanvasElement, HeaderCanvasProps>(
       // Name tag: auto-fit bold white RTL text centered inside an invisible
       // fixed box (the box only constrains where the text can be dragged —
       // it isn't drawn).
-      if (textLayer.text.trim() && fontsSettled) {
+      if (textLayer.text.trim()) {
         const box = getNameBoxRect(width, height);
 
         const { fontSize } = fittedTextMetrics(ctx, textLayer.text, box);
@@ -177,7 +158,7 @@ export const HeaderCanvas = forwardRef<HTMLCanvasElement, HeaderCanvasProps>(
         ctx.fillStyle = NAME_TEXT_DEFAULTS.color;
         ctx.fillText(textLayer.text, textX, textY);
       }
-    }, [backgroundImage, creatorImage, backgroundUrl, creatorUrl, textLayer, fontsSettled]);
+    }, [backgroundImage, creatorImage, backgroundUrl, creatorUrl, textLayer]);
 
     const hitTest = (canvasX: number, canvasY: number): boolean => {
       const canvas = canvasRef.current;

@@ -17,10 +17,12 @@ export const HEADER_EXPORT_HEIGHT = 1200;
 export const PFP_EXPORT_SIZE = 2000;
 
 export const NAME_TEXT_DEFAULTS = {
-  // Falls back to a bold Arabic-capable sans-serif until the real "KO Pilot"
-  // font file is dropped into /public/fonts and registered via @font-face
-  // (KO Pilot itself is Latin-only, so names typed in Arabic still need Cairo).
-  fontFamily: '"KO Pilot", "Cairo", "Segoe UI", Tahoma, sans-serif',
+  // Deliberately NOT "KO Pilot" here: it's a Latin-only display font with no
+  // Arabic glyphs, and canvas fillText doesn't reliably fall back per-character
+  // the way normal DOM text does — asking it to render Arabic names produced
+  // corrupted/overlapping glyphs on iOS Safari once the font was actually
+  // available. Cairo fully supports Arabic and renders correctly everywhere.
+  fontFamily: '"Cairo", "Segoe UI", Tahoma, sans-serif',
   color: "#ffffff",
   // Ratio of canvas width, mirrors the ~204px/6000px sizing used in the real creative.
   fontSizeRatio: 0.075,
