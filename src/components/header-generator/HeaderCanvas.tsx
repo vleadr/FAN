@@ -102,20 +102,19 @@ export const HeaderCanvas = forwardRef<HTMLCanvasElement, HeaderCanvasProps>(
     const creatorImage = useLoadedImage(creatorUrl);
 
     // @font-face alone doesn't reliably fetch a font that's only ever used on
-    // <canvas> (no DOM text triggers it) — force-load it explicitly, then
-    // redraw once it's actually available so the canvas isn't stuck on the
-    // Cairo fallback.
-    const [nameFontReady, setNameFontReady] = useState(false);
+    // <canvas> (no DOM text triggers it) — force-load it explicitly. The name
+    // text is only ever drawn once this settles (success OR failure), never
+    // before: iOS Safari has canvas text-rasterization bugs when the *same*
+    // canvas redraws text after its font swaps mid-session (fallback → real
+    // font), which showed up as duplicated/ghosted glyphs. Drawing it exactly
+    // once, already on its final font, avoids that swap entirely.
+    const [fontsSettled, setFontsSettled] = useState(false);
     useEffect(() => {
       let cancelled = false;
-      document.fonts
-        .load('900 100px "KO Pilot"')
-        .then(() => {
-          if (!cancelled) setNameFontReady(true);
-        })
-        .catch(() => {
-          // Missing/invalid font file — the fontFamily fallback stack (Cairo) still applies.
-        });
+      const markSettled = () => {
+        if (!cancelled) setFontsSettled(true);
+      };
+      document.fonts.load('900 100px "KO Pilot"').then(markSettled).catch(markSettled);
       return () => {
         cancelled = true;
       };
@@ -156,29 +155,29 @@ export const HeaderCanvas = forwardRef<HTMLCanvasElement, HeaderCanvasProps>(
       // Name tag: auto-fit bold white RTL text centered inside an invisible
       // fixed box (the box only constrains where the text can be dragged —
       // it isn't drawn).
-      if (textLayer.text.trim()) {
+      if (textLayer.text.trim() && fontsSettled) {
         const box = getNameBoxRect(width, height);
 
         const { fontSize } = fittedTextMetrics(ctx, textLayer.text, box);
         ctx.font = `900 ${fontSize}px ${NAME_TEXT_DEFAULTS.fontFamily}`;
-        ctx.fillStyle = NAME_TEXT_DEFAULTS.color;
         ctx.direction = "rtl";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
-        // Drop shadow at a 90° angle (straight down), hard-edged, fully opaque.
-        ctx.shadowColor = "rgba(0, 0, 0, 1)";
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = fontSize * 0.04;
+        const textX = textLayer.xNorm * width;
+        const textY = textLayer.yNorm * height;
 
-        ctx.fillText(textLayer.text, textLayer.xNorm * width, textLayer.yNorm * height);
+        // Drop shadow at a 90° angle (straight down), hard-edged, fully opaque —
+        // drawn as an explicit second copy of the text rather than via
+        // ctx.shadow*, which has a long history of duplicated/ghosted-glyph
+        // rendering bugs on iOS Safari.
+        ctx.fillStyle = "#000000";
+        ctx.fillText(textLayer.text, textX, textY + fontSize * 0.04);
 
-        ctx.shadowColor = "transparent";
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetY = 0;
+        ctx.fillStyle = NAME_TEXT_DEFAULTS.color;
+        ctx.fillText(textLayer.text, textX, textY);
       }
-    }, [backgroundImage, creatorImage, backgroundUrl, creatorUrl, textLayer, nameFontReady]);
+    }, [backgroundImage, creatorImage, backgroundUrl, creatorUrl, textLayer, fontsSettled]);
 
     const hitTest = (canvasX: number, canvasY: number): boolean => {
       const canvas = canvasRef.current;
