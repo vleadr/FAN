@@ -17,7 +17,8 @@ export function LandingPage() {
           src="/assets/headers/Peaks_Header_RedSeaNew.webp"
           alt="صيفية بيكس — البحر الأحمر"
           width={1800}
-          height={600}
+          height={800}
+
           loading="eager"
           fetchPriority="high"
           decoding="async"
@@ -26,9 +27,27 @@ export function LandingPage() {
       </div>
 
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-4 py-10 text-center sm:px-8">
-        <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-1.5 text-xs font-semibold tracking-wide text-sea-700 uppercase shadow-sm">
-          واجهة البحر الأحمر
-        </p>
+        <div className="mb-3 inline-flex items-center gap-3 rounded-full bg-white/70 px-4 py-2 shadow-sm">
+          <img
+            src="/assets/branding/logo.webp"
+            alt="Peaks"
+            width={40}
+            height={40}
+            loading="eager"
+            decoding="async"
+            className="h-10 w-10 rounded-full object-cover"
+          />
+          <span className="text-lg font-bold text-sea-400">×</span>
+          <img
+            src="/assets/branding/The-Red-Sea-01.webp"
+            alt="The Red Sea — البحر الأحمر"
+            width={1920}
+            height={600}
+            loading="eager"
+            decoding="async"
+            className="h-20 w-auto object-contain"
+          />
+        </div>
         <h1 className="font-display text-4xl leading-tight font-black text-sea-950 sm:text-5xl md:text-6xl">
           صيفية <span className="text-coral-500">بيكس</span>
         </h1>
@@ -46,7 +65,7 @@ export function LandingPage() {
             <div>
               <h2 className="text-xl font-bold text-sea-950">إنشاء الهيدر</h2>
               <p className="mt-1 text-sm text-sea-600">
-                اختر أحد صناع المحتوى، أضف اسمك، وحمّل الهيدر البحر الأحمر.
+                اختر احد صناع المحتوى واضف اسمك وحمل الهيدر الخاص فيك
               </p>
             </div>
             <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-coral-600">
@@ -63,7 +82,7 @@ export function LandingPage() {
             <div>
               <h2 className="text-xl font-bold text-sea-950">إنشاء صورة شخصية</h2>
               <p className="mt-1 text-sm text-sea-600">
-                ارفع صورتك واحصل فورًا على صورة شخصية بيكس .
+                ارفع صورتك وخذ صورة بروفايل بهوية البحر الاحمر
               </p>
             </div>
             <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-coral-600">
