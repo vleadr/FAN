@@ -1,31 +1,34 @@
 # Campaign assets
 
+All images are WebP (converted from the original PNG/JPG exports — smaller
+files, same quality, native browser support for lazy-loading and decoding).
+
 ## headers/
 
-- `Red-Sea-Fan-Header-background.jpg` — the empty template (beach + logos,
+- `Red-Sea-Fan-Header-background.webp` — the empty template (beach + logos,
   no creators). **Active by default.**
-- `Peaks_Header_RedSeaNew.jpg` — group photo with all creators already baked in.
-- `Peaks_HeaderYT_RedSeaNew.jpg` — YouTube variant, also a group photo.
+- `Peaks_Header_RedSeaNew.webp` — group photo with all creators already baked in.
 
 ## creators/
 
-12 real transparent-background PNG cutouts, seeded by default. The Header
-Generator overlays a creator's image **centered on top of** the active
-background, so each creator image must be a cutout of that person only (no
-beach scene baked in) — a flattened photo/JPG would just stack a second
-background on top of the first.
+11 real transparent-background cutouts, seeded by default (Arabic filenames —
+that's how they're supplied; browsers handle Unicode/space characters in
+`src` fine). The Header Generator overlays a creator's image **centered
+(slightly left-shifted) on top of** the active background, so each creator
+image must be a cutout of that person only (no beach scene baked in) — a
+flattened photo would just stack a second background on top of the first.
 
 Add more from `/admin` → Creators (dev-only, `npm run dev`) by uploading a
-transparent PNG cutout there.
+transparent-background cutout there.
 
 ## frames/
 
-- `Community_PFP.png` — the real profile-picture frame (circular ring +
+- `Community_PFP.webp` — the real profile-picture frame (circular ring +
   beach decorations), has a transparent center by design.
 
 ## branding/
 
-- `logo.jpg` — the Peaks logo, used in the top nav bar.
+- `logo.webp` — the Peaks logo, used in the top nav bar.
 
 ---
 

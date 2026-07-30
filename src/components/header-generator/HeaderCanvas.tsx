@@ -5,13 +5,19 @@ import {
   drawMissingPlaceholder,
   loadImage,
 } from "../../lib/canvasCompositor";
-import { HEADER_EXPORT_HEIGHT, HEADER_EXPORT_WIDTH, NAME_TEXT_DEFAULTS } from "../../lib/constants";
+import {
+  CREATOR_OFFSET_X_RATIO,
+  HEADER_EXPORT_HEIGHT,
+  HEADER_EXPORT_WIDTH,
+  NAME_BOX,
+  NAME_TEXT_DEFAULTS,
+} from "../../lib/constants";
 import { useDraggableText } from "../../lib/useDraggable";
 import type { TextLayer } from "../../types/assets";
 
 interface HeaderCanvasProps {
   backgroundUrl: string | undefined;
-  /** A transparent-background cutout of the selected creator, centered over the background. */
+  /** A transparent-background cutout of the selected creator, centered (minus a slight left offset) over the background. */
   creatorUrl: string | undefined;
   textLayer: TextLayer;
   onTextPositionChange: (pos: { xNorm: number; yNorm: number }) => void;
@@ -40,12 +46,50 @@ function useLoadedImage(url: string | undefined): LoadedImage {
   return image;
 }
 
-function measureText(ctx: CanvasRenderingContext2D, text: string, fontSize: number) {
-  ctx.font = `900 ${fontSize}px ${NAME_TEXT_DEFAULTS.fontFamily}`;
-  const metrics = ctx.measureText(text);
-  const width = metrics.width;
-  const height = fontSize * 1.2;
-  return { width, height };
+interface BoxRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+function getNameBoxRect(canvasWidth: number, canvasHeight: number): BoxRect {
+  const width = NAME_BOX.widthRatio * canvasWidth;
+  const height = NAME_BOX.heightRatio * canvasHeight;
+  return {
+    left: NAME_BOX.xNorm * canvasWidth - width / 2,
+    top: NAME_BOX.yNorm * canvasHeight - height / 2,
+    width,
+    height,
+  };
+}
+
+/** Shrinks the font until `text` fits within `maxWidth`, down to `minSize`. */
+function fitFontSize(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  fontFamily: string,
+  maxWidth: number,
+  startSize: number,
+  minSize: number,
+): number {
+  let size = startSize;
+  while (size > minSize) {
+    ctx.font = `900 ${size}px ${fontFamily}`;
+    if (ctx.measureText(text).width <= maxWidth) return size;
+    size -= 2;
+  }
+  return minSize;
+}
+
+function fittedTextMetrics(ctx: CanvasRenderingContext2D, text: string, box: BoxRect) {
+  const maxWidth = box.width * 0.94;
+  const startSize = box.height * 0.9;
+  const minSize = box.height * 0.32;
+  const fontSize = fitFontSize(ctx, text, NAME_TEXT_DEFAULTS.fontFamily, maxWidth, startSize, minSize);
+  const width = Math.min(ctx.measureText(text).width, box.width);
+  const height = Math.min(fontSize * 1.2, box.height);
+  return { fontSize, width, height };
 }
 
 export const HeaderCanvas = forwardRef<HTMLCanvasElement, HeaderCanvasProps>(
@@ -55,6 +99,26 @@ export const HeaderCanvas = forwardRef<HTMLCanvasElement, HeaderCanvasProps>(
 
     const backgroundImage = useLoadedImage(backgroundUrl);
     const creatorImage = useLoadedImage(creatorUrl);
+
+    // @font-face alone doesn't reliably fetch a font that's only ever used on
+    // <canvas> (no DOM text triggers it) — force-load it explicitly, then
+    // redraw once it's actually available so the canvas isn't stuck on the
+    // Cairo fallback.
+    const [nameFontReady, setNameFontReady] = useState(false);
+    useEffect(() => {
+      let cancelled = false;
+      document.fonts
+        .load('900 100px "KO Pilot"')
+        .then(() => {
+          if (!cancelled) setNameFontReady(true);
+        })
+        .catch(() => {
+          // Missing/invalid font file — the fontFamily fallback stack (Cairo) still applies.
+        });
+      return () => {
+        cancelled = true;
+      };
+    }, []);
 
     useEffect(() => {
       const canvas = canvasRef.current;
@@ -75,55 +139,69 @@ export const HeaderCanvas = forwardRef<HTMLCanvasElement, HeaderCanvasProps>(
         ctx.fillRect(0, 0, width, height);
       }
 
-      // Creator overlay layer — centered on top of the background
+      // Creator overlay layer — shifted slightly left of dead-center
       if (creatorImage === "missing" && creatorUrl) {
         const w = width * 0.4;
         const h = height * 0.9;
-        drawMissingPlaceholder(ctx, creatorUrl, (width - w) / 2, height - h, w, h);
+        const x = (width - w) / 2 + width * CREATOR_OFFSET_X_RATIO;
+        drawMissingPlaceholder(ctx, creatorUrl, x, height - h, w, h);
       } else if (creatorImage && creatorImage !== "missing") {
-        drawImageContain(ctx, creatorImage, 0, 0, width, height);
+        drawImageContain(ctx, creatorImage, 0, 0, width, height, CREATOR_OFFSET_X_RATIO);
       }
 
-      // Name text layer
+      // Name tag: auto-fit bold white RTL text centered inside an invisible
+      // fixed box (the box only constrains where the text can be dragged —
+      // it isn't drawn).
       if (textLayer.text.trim()) {
-        const fontSize = width * NAME_TEXT_DEFAULTS.fontSizeRatio;
+        const box = getNameBoxRect(width, height);
+
+        const { fontSize } = fittedTextMetrics(ctx, textLayer.text, box);
         ctx.font = `900 ${fontSize}px ${NAME_TEXT_DEFAULTS.fontFamily}`;
         ctx.fillStyle = NAME_TEXT_DEFAULTS.color;
         ctx.direction = "rtl";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.shadowColor = "rgba(0, 0, 0, 0.45)";
-        ctx.shadowBlur = fontSize * 0.12;
-        ctx.shadowOffsetY = fontSize * 0.03;
         ctx.fillText(textLayer.text, textLayer.xNorm * width, textLayer.yNorm * height);
-        ctx.shadowColor = "transparent";
-        ctx.shadowBlur = 0;
       }
-    }, [backgroundImage, creatorImage, backgroundUrl, creatorUrl, textLayer]);
+    }, [backgroundImage, creatorImage, backgroundUrl, creatorUrl, textLayer, nameFontReady]);
 
     const hitTest = (canvasX: number, canvasY: number): boolean => {
       const canvas = canvasRef.current;
-      const ctx = canvas?.getContext("2d");
-      if (!canvas || !ctx || !textLayer.text.trim()) return false;
-
-      const fontSize = canvas.width * NAME_TEXT_DEFAULTS.fontSizeRatio;
-      const { width, height } = measureText(ctx, textLayer.text, fontSize);
-      const cx = textLayer.xNorm * canvas.width;
-      const cy = textLayer.yNorm * canvas.height;
-      const padding = Math.max(canvas.width * 0.015, 40);
-
+      if (!canvas || !textLayer.text.trim()) return false;
+      const box = getNameBoxRect(canvas.width, canvas.height);
       return (
-        canvasX >= cx - width / 2 - padding &&
-        canvasX <= cx + width / 2 + padding &&
-        canvasY >= cy - height / 2 - padding &&
-        canvasY <= cy + height / 2 + padding
+        canvasX >= box.left &&
+        canvasX <= box.left + box.width &&
+        canvasY >= box.top &&
+        canvasY <= box.top + box.height
       );
+    };
+
+    // Keeps the text fully inside the red box — it can be nudged around within
+    // it, but never dragged out.
+    const clampToBox = (xNorm: number, yNorm: number) => {
+      const canvas = canvasRef.current;
+      const ctx = canvas?.getContext("2d");
+      if (!canvas || !ctx) return { xNorm, yNorm };
+
+      const box = getNameBoxRect(canvas.width, canvas.height);
+      const { width: textWidth, height: textHeight } = fittedTextMetrics(ctx, textLayer.text, box);
+
+      const minCenterX = box.left + textWidth / 2;
+      const maxCenterX = box.left + box.width - textWidth / 2;
+      const minCenterY = box.top + textHeight / 2;
+      const maxCenterY = box.top + box.height - textHeight / 2;
+
+      const centerX = Math.min(Math.max(xNorm * canvas.width, minCenterX), maxCenterX);
+      const centerY = Math.min(Math.max(yNorm * canvas.height, minCenterY), maxCenterY);
+
+      return { xNorm: centerX / canvas.width, yNorm: centerY / canvas.height };
     };
 
     const { handlePointerDown, handlePointerMove, handlePointerUp } = useDraggableText({
       getCanvas: () => canvasRef.current,
       hitTest,
-      onDrag: onTextPositionChange,
+      onDrag: (pos) => onTextPositionChange(clampToBox(pos.xNorm, pos.yNorm)),
     });
 
     return (

@@ -16,19 +16,24 @@ export function LandingPage() {
         <img
           src="/assets/headers/Peaks_Header_RedSeaNew.webp"
           alt="صيفية بيكس — البحر الأحمر"
+          width={1800}
+          height={600}
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
           className="aspect-[3/1] w-full rounded-3xl object-cover shadow-beach"
         />
       </div>
 
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-4 py-10 text-center sm:px-8">
         <p className="mb-3 inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-1.5 text-xs font-semibold tracking-wide text-sea-700 uppercase shadow-sm">
-          🌊  البحر الأحمر
+          واجهة البحر الأحمر
         </p>
         <h1 className="font-display text-4xl leading-tight font-black text-sea-950 sm:text-5xl md:text-6xl">
           صيفية <span className="text-coral-500">بيكس</span>
         </h1>
         <p className="mt-4 max-w-xl text-base text-sea-700 sm:text-lg">
-          أنشئ الهيدر الخاص بك لرحلة البحر الأحمر أو بروفايل خلال ثوانٍ  مباشرةوجاهزة للتحميل.
+          أنشئ الهيدر الخاص بك لرحلة البحر الأحمر أو بروفايل خلال ثوانٍ  مباشرة وجاهزة للتحميل.
         </p>
 
         <div className="mt-10 grid w-full max-w-3xl gap-6 sm:grid-cols-2">
@@ -37,7 +42,7 @@ export function LandingPage() {
             className="group relative flex flex-col items-center gap-4 overflow-hidden rounded-3xl border border-white/60 bg-white/80 p-8 text-start shadow-beach transition hover:-translate-y-1 hover:shadow-xl"
           >
             <span className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-sea-200/60 transition group-hover:scale-125" />
-            <span className="text-5xl">🖼️</span>
+            <span className="text-5xl"><img src="/assets/branding/header-test.webp" alt="Peaks" width={36} height={36} loading="eager" fetchPriority="high" decoding="async" className="h-20 w-50 rounded-full object-cover shadow-sm" /></span>
             <div>
               <h2 className="text-xl font-bold text-sea-950">إنشاء الهيدر</h2>
               <p className="mt-1 text-sm text-sea-600">
@@ -54,7 +59,7 @@ export function LandingPage() {
             className="group relative flex flex-col items-center gap-4 overflow-hidden rounded-3xl border border-white/60 bg-white/80 p-8 text-start shadow-beach transition hover:-translate-y-1 hover:shadow-xl"
           >
             <span className="absolute -top-10 -right-10 h-32 w-32 rounded-full bg-coral-200/50 transition group-hover:scale-125" />
-            <span className="text-5xl">🙂</span>
+            <span className="text-5xl"><img src="/assets/branding/Peaks-Profile-Picture.png" alt="Peaks" width={36} height={36} loading="eager" fetchPriority="high" decoding="async" className="h-30 w-30 rounded-full object-cover shadow-sm" /></span>
             <div>
               <h2 className="text-xl font-bold text-sea-950">إنشاء صورة شخصية</h2>
               <p className="mt-1 text-sm text-sea-600">

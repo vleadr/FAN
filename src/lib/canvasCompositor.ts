@@ -47,7 +47,11 @@ export function drawImageCover(
   ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
 }
 
-/** Draws `img` contain-fit (no crop) centered within the target rect, preserving transparency. */
+/**
+ * Draws `img` contain-fit (no crop) centered within the target rect, preserving
+ * transparency. `offsetXRatio` shifts the centered image horizontally by that
+ * fraction of `w` (negative = left) — e.g. to make room for a name tag on one side.
+ */
 export function drawImageContain(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
@@ -55,6 +59,7 @@ export function drawImageContain(
   y: number,
   w: number,
   h: number,
+  offsetXRatio = 0,
 ) {
   const imgRatio = img.naturalWidth / img.naturalHeight;
   const rectRatio = w / h;
@@ -66,7 +71,7 @@ export function drawImageContain(
   } else {
     dw = h * imgRatio;
   }
-  const dx = x + (w - dw) / 2;
+  const dx = x + (w - dw) / 2 + w * offsetXRatio;
   const dy = y + (h - dh) / 2;
 
   ctx.drawImage(img, dx, dy, dw, dh);

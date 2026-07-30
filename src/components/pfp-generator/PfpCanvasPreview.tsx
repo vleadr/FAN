@@ -111,7 +111,7 @@ export const PfpCanvasPreview = forwardRef<HTMLCanvasElement, PfpCanvasPreviewPr
         ctx.font = `${width * 0.08}px sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText("📷", width / 2, height / 2);
+        ctx.fillText("", width / 2, height / 2);
         ctx.restore();
       }
 
@@ -162,9 +162,8 @@ export const PfpCanvasPreview = forwardRef<HTMLCanvasElement, PfpCanvasPreviewPr
         width={PFP_EXPORT_SIZE}
         height={PFP_EXPORT_SIZE}
         style={{ touchAction: "none" }}
-        className={`aspect-square w-full max-w-sm touch-none rounded-full border border-white/60 bg-sea-100 shadow-beach select-none ${
-          hasDraggablePhoto ? "cursor-grab active:cursor-grabbing" : ""
-        }`}
+        className={`aspect-square w-full max-w-sm touch-none rounded-full border border-white/60 bg-sea-100 shadow-beach select-none ${hasDraggablePhoto ? "cursor-grab active:cursor-grabbing" : ""
+          }`}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}

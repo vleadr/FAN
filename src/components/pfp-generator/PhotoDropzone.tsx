@@ -34,14 +34,20 @@ export function PhotoDropzone({ onFileSelected, previewUrl }: PhotoDropzoneProps
       }}
       onDragLeave={() => setIsDragOver(false)}
       onDrop={handleDrop}
-      className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-10 text-center transition ${
-        isDragOver ? "border-coral-500 bg-coral-50" : "border-sea-300 bg-white hover:bg-sea-50"
-      }`}
+      className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed px-6 py-10 text-center transition ${isDragOver ? "border-coral-500 bg-coral-50" : "border-sea-300 bg-white hover:bg-sea-50"
+        }`}
     >
       {previewUrl ? (
-        <img src={previewUrl} alt="معاينة الصورة المرفوعة" className="h-24 w-24 rounded-full object-cover shadow" />
+        <img
+          src={previewUrl}
+          alt="معاينة الصورة المرفوعة"
+          width={96}
+          height={96}
+          decoding="async"
+          className="h-24 w-24 rounded-full object-cover shadow"
+        />
       ) : (
-        <span className="text-4xl">📸</span>
+        <span className="text-4xl"></span>
       )}
       <p className="text-sm font-semibold text-sea-800">
         {previewUrl ? "اضغط أو اسحب لاستبدال الصورة" : "اضغط أو اسحب صورتك هنا"}

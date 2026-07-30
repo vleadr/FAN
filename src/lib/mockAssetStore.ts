@@ -37,12 +37,6 @@ function seedData(): AssetStoreData {
         imageUrl: `${ASSET_PATHS.headers}/Peaks_Header_RedSeaNew.webp`,
         isActive: false,
       },
-      {
-        id: "bg-header-yt-redsea",
-        label: "هيدر — يوتيوب — البحر الأحمر",
-        imageUrl: `${ASSET_PATHS.headers}/Peaks_HeaderYT_RedSeaNew.jpg`,
-        isActive: false,
-      },
     ],
     frames: [
       {

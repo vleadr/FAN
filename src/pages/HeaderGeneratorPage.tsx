@@ -6,7 +6,7 @@ import { CreatorCarousel } from "../components/header-generator/CreatorCarousel"
 import { NameInput } from "../components/header-generator/NameInput";
 import { HeaderCanvas } from "../components/header-generator/HeaderCanvas";
 import { useAssetStore } from "../context/AssetStoreContext";
-import { NAME_TEXT_DEFAULTS } from "../lib/constants";
+import { NAME_BOX } from "../lib/constants";
 import { exportCanvas } from "../lib/canvasCompositor";
 import type { TextLayer } from "../types/assets";
 
@@ -15,8 +15,8 @@ export function HeaderGeneratorPage() {
   const [selectedCreatorId, setSelectedCreatorId] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [position, setPosition] = useState<{ xNorm: number; yNorm: number }>({
-    xNorm: NAME_TEXT_DEFAULTS.xNorm,
-    yNorm: NAME_TEXT_DEFAULTS.yNorm,
+    xNorm: NAME_BOX.xNorm,
+    yNorm: NAME_BOX.yNorm,
   });
   const [isDownloading, setIsDownloading] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);

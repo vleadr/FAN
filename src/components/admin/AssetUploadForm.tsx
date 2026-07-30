@@ -55,7 +55,16 @@ export function AssetUploadForm({ nameLabel, namePlaceholder, submitLabel, onSub
         <div className="flex-1">
           <label className="mb-1 block text-xs font-semibold text-sea-700">ملف الصورة</label>
           <div className="flex items-center gap-2">
-            {previewUrl && <img src={previewUrl} alt="" className="h-9 w-9 rounded object-cover" />}
+            {previewUrl && (
+              <img
+                src={previewUrl}
+                alt=""
+                width={36}
+                height={36}
+                decoding="async"
+                className="h-9 w-9 rounded object-cover"
+              />
+            )}
             <input
               type="file"
               accept="image/*"

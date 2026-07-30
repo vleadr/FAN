@@ -37,6 +37,8 @@ export function AssetTable({ rows, onDelete, onSetActive, emptyMessage = "لا �
                 <ImageWithFallback
                   src={row.imageUrl}
                   alt={row.label}
+                  width={48}
+                  height={48}
                   className="h-12 w-12 rounded-lg object-cover"
                 />
               </td>
