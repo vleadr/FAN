@@ -161,7 +161,18 @@ export const HeaderCanvas = forwardRef<HTMLCanvasElement, HeaderCanvasProps>(
         ctx.direction = "rtl";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
+
+        // Drop shadow at a 90° angle (straight down), hard-edged, fully opaque.
+        ctx.shadowColor = "rgba(0, 0, 0, 1)";
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = fontSize * 0.04;
+
         ctx.fillText(textLayer.text, textLayer.xNorm * width, textLayer.yNorm * height);
+
+        ctx.shadowColor = "transparent";
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
       }
     }, [backgroundImage, creatorImage, backgroundUrl, creatorUrl, textLayer, nameFontReady]);
 
