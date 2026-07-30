@@ -5,9 +5,13 @@ export const ASSET_PATHS = {
   branding: "/assets/branding",
 } as const;
 
-/** Matches the real campaign creative's canvas (a 3:1 wide banner). */
-export const HEADER_EXPORT_WIDTH = 6000;
-export const HEADER_EXPORT_HEIGHT = 2000;
+// Kept at/under 4096px per side (a 3:1 wide banner) — iOS Safari has a long
+// history of tiling/corrupting <canvas> backing stores larger than that (GPU
+// texture size limits), which shows up as content repeating across tile
+// seams — e.g. the name text appearing duplicated 2-3 times. 3600 is still
+// far higher resolution than any social banner actually needs.
+export const HEADER_EXPORT_WIDTH = 3600;
+export const HEADER_EXPORT_HEIGHT = 1200;
 
 /** Square export so the circular PFP crop is unambiguous. */
 export const PFP_EXPORT_SIZE = 2000;

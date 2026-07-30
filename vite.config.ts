@@ -9,4 +9,9 @@ export default defineConfig({
   // resizes/re-encodes it at build time. Doesn't apply to files served as-is from `public/`
   // (those are pre-optimized directly — see public/assets/README.md).
   plugins: [react(), tailwindcss(), imagetools()],
+  server: {
+    watch: {
+      ignored: ['**/*.crdownload'],
+    },
+  },
 })
