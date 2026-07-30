@@ -16,6 +16,12 @@ export const HEADER_EXPORT_HEIGHT = 1200;
 /** Square export so the circular PFP crop is unambiguous. */
 export const PFP_EXPORT_SIZE = 2000;
 
+// 1.0 = the photo just covers the circle with no gaps. Below that the user
+// can zoom out to show more of the photo (small gaps get a neutral fill);
+// above it they zoom in. Shared between the slider and pinch-to-zoom.
+export const PFP_MIN_ZOOM = 0.5;
+export const PFP_MAX_ZOOM = 2.5;
+
 export const NAME_TEXT_DEFAULTS = {
   // Deliberately NOT "KO Pilot" here: it's a Latin-only display font with no
   // Arabic glyphs, and canvas fillText doesn't reliably fall back per-character

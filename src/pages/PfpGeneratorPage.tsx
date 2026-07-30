@@ -6,15 +6,15 @@ import { PhotoDropzone } from "../components/pfp-generator/PhotoDropzone";
 import { PfpCanvasPreview, type PhotoOffset } from "../components/pfp-generator/PfpCanvasPreview";
 import { useAssetStore } from "../context/AssetStoreContext";
 import { exportCanvas } from "../lib/canvasCompositor";
+import { PFP_MAX_ZOOM, PFP_MIN_ZOOM } from "../lib/constants";
 
-const MIN_ZOOM = 1;
-const MAX_ZOOM = 2.5;
+const DEFAULT_ZOOM = 1;
 const DEFAULT_OFFSET: PhotoOffset = { x: 0, y: 0 };
 
 export function PfpGeneratorPage() {
   const { activeFrame } = useAssetStore();
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  const [zoom, setZoom] = useState(MIN_ZOOM);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [offset, setOffset] = useState<PhotoOffset>(DEFAULT_OFFSET);
   const [isDownloading, setIsDownloading] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -30,7 +30,7 @@ export function PfpGeneratorPage() {
       if (prev) URL.revokeObjectURL(prev);
       return URL.createObjectURL(file);
     });
-    setZoom(MIN_ZOOM);
+    setZoom(DEFAULT_ZOOM);
     setOffset(DEFAULT_OFFSET);
   };
 
@@ -56,6 +56,7 @@ export function PfpGeneratorPage() {
             zoom={zoom}
             offset={offset}
             onOffsetChange={setOffset}
+            onZoomChange={setZoom}
           />
           {photoUrl && (
             <p className="mt-2 text-center text-xs text-sea-500">اسحب الصورة لتحديد موضعها</p>
@@ -73,8 +74,8 @@ export function PfpGeneratorPage() {
               <span className="text-lg">🔍</span>
               <input
                 type="range"
-                min={MIN_ZOOM}
-                max={MAX_ZOOM}
+                min={PFP_MIN_ZOOM}
+                max={PFP_MAX_ZOOM}
                 step={0.01}
                 value={zoom}
                 onChange={(e) => setZoom(Number(e.target.value))}
@@ -84,7 +85,7 @@ export function PfpGeneratorPage() {
               <button
                 type="button"
                 onClick={() => {
-                  setZoom(MIN_ZOOM);
+                  setZoom(DEFAULT_ZOOM);
                   setOffset(DEFAULT_OFFSET);
                 }}
                 className="text-xs font-semibold text-sea-600 hover:underline"

@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 import { drawImageCover, drawMissingPlaceholder, loadImage } from "../../lib/canvasCompositor";
-import { PFP_EXPORT_SIZE } from "../../lib/constants";
+import { PFP_EXPORT_SIZE, PFP_MAX_ZOOM, PFP_MIN_ZOOM } from "../../lib/constants";
 
 export interface PhotoOffset {
   x: number;
@@ -14,6 +14,7 @@ interface PfpCanvasPreviewProps {
   zoom: number;
   offset: PhotoOffset;
   onOffsetChange: (offset: PhotoOffset) => void;
+  onZoomChange: (zoom: number) => void;
 }
 
 type LoadedImage = HTMLImageElement | "missing" | null;
@@ -44,7 +45,11 @@ function coverScale(img: HTMLImageElement, size: number): number {
   return Math.max(size / img.naturalWidth, size / img.naturalHeight);
 }
 
-/** Keeps the panned photo from revealing gaps at the current zoom level. */
+/**
+ * Keeps the panned photo centered once it's zoomed out smaller than the
+ * circle in a given dimension (no dragging into an even bigger gap), while
+ * still allowing free panning once it's zoomed in past cover-scale.
+ */
 export function clampPhotoOffset(offset: PhotoOffset, zoom: number, img: HTMLImageElement | null): PhotoOffset {
   if (!img) return offset;
   const scale = coverScale(img, PFP_EXPORT_SIZE) * zoom;
@@ -58,8 +63,16 @@ export function clampPhotoOffset(offset: PhotoOffset, zoom: number, img: HTMLIma
   };
 }
 
+function distanceBetween(a: { x: number; y: number }, b: { x: number; y: number }): number {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
 export const PfpCanvasPreview = forwardRef<HTMLCanvasElement, PfpCanvasPreviewProps>(
-  ({ photoUrl, frameUrl, zoom, offset, onOffsetChange }, forwardedRef) => {
+  ({ photoUrl, frameUrl, zoom, offset, onOffsetChange, onZoomChange }, forwardedRef) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     useImperativeHandle(forwardedRef, () => canvasRef.current as HTMLCanvasElement);
 
@@ -69,8 +82,12 @@ export const PfpCanvasPreview = forwardRef<HTMLCanvasElement, PfpCanvasPreviewPr
     const draggingRef = useRef(false);
     const lastPointRef = useRef<{ x: number; y: number } | null>(null);
 
-    // Re-clamp whenever zoom changes (e.g. via the slider) so zooming back out
-    // never leaves a gap from an offset that was only valid at the old zoom.
+    // Active touch/pointer points by id, for pinch-to-zoom on phones.
+    const pointersRef = useRef<Map<number, { x: number; y: number }>>(new Map());
+    const pinchRef = useRef<{ startDistance: number; startZoom: number } | null>(null);
+
+    // Re-clamp whenever zoom changes (e.g. via the slider or a pinch) so
+    // zooming back out never leaves the photo hanging off-center.
     useEffect(() => {
       if (!photoImage || photoImage === "missing") return;
       const clamped = clampPhotoOffset(offset, zoom, photoImage);
@@ -88,32 +105,31 @@ export const PfpCanvasPreview = forwardRef<HTMLCanvasElement, PfpCanvasPreviewPr
       const { width, height } = canvas;
       ctx.clearRect(0, 0, width, height);
 
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(width / 2, height / 2, width / 2, 0, Math.PI * 2);
+      ctx.clip();
+
+      // Neutral fill first: zooming out below cover-scale can reveal a gap
+      // around the photo, so that gap shows a clean color instead of a hole.
+      ctx.fillStyle = "#dff1f5";
+      ctx.fillRect(0, 0, width, height);
+
       if (photoImage && photoImage !== "missing") {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(width / 2, height / 2, width / 2, 0, Math.PI * 2);
-        ctx.clip();
         const scale = coverScale(photoImage, width) * zoom;
         const drawWidth = photoImage.naturalWidth * scale;
         const drawHeight = photoImage.naturalHeight * scale;
         const dx = width / 2 + offset.x - drawWidth / 2;
         const dy = height / 2 + offset.y - drawHeight / 2;
         ctx.drawImage(photoImage, dx, dy, drawWidth, drawHeight);
-        ctx.restore();
       } else {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(width / 2, height / 2, width / 2, 0, Math.PI * 2);
-        ctx.clip();
-        ctx.fillStyle = "#dff1f5";
-        ctx.fillRect(0, 0, width, height);
         ctx.fillStyle = "#7fb3c2";
         ctx.font = `${width * 0.08}px sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText("", width / 2, height / 2);
-        ctx.restore();
       }
+      ctx.restore();
 
       if (frameImage === "missing" && frameUrl) {
         drawMissingPlaceholder(ctx, frameUrl, 0, 0, width, height);
@@ -126,12 +142,32 @@ export const PfpCanvasPreview = forwardRef<HTMLCanvasElement, PfpCanvasPreviewPr
 
     const handlePointerDown = (e: ReactPointerEvent<HTMLCanvasElement>) => {
       if (!hasDraggablePhoto) return;
-      draggingRef.current = true;
-      lastPointRef.current = { x: e.clientX, y: e.clientY };
       e.currentTarget.setPointerCapture(e.pointerId);
+      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (pointersRef.current.size === 2) {
+        // A second finger just landed — switch from panning to pinch-zoom.
+        const [p1, p2] = Array.from(pointersRef.current.values());
+        pinchRef.current = { startDistance: distanceBetween(p1, p2), startZoom: zoom };
+        draggingRef.current = false;
+      } else if (pointersRef.current.size === 1) {
+        draggingRef.current = true;
+        lastPointRef.current = { x: e.clientX, y: e.clientY };
+      }
     };
 
     const handlePointerMove = (e: ReactPointerEvent<HTMLCanvasElement>) => {
+      if (!pointersRef.current.has(e.pointerId)) return;
+      pointersRef.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (pointersRef.current.size === 2 && pinchRef.current) {
+        const [p1, p2] = Array.from(pointersRef.current.values());
+        const distance = distanceBetween(p1, p2);
+        const ratio = distance / pinchRef.current.startDistance;
+        onZoomChange(clamp(pinchRef.current.startZoom * ratio, PFP_MIN_ZOOM, PFP_MAX_ZOOM));
+        return;
+      }
+
       if (!draggingRef.current || !lastPointRef.current) return;
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -148,11 +184,23 @@ export const PfpCanvasPreview = forwardRef<HTMLCanvasElement, PfpCanvasPreviewPr
     };
 
     const handlePointerUp = (e: ReactPointerEvent<HTMLCanvasElement>) => {
-      if (!draggingRef.current) return;
-      draggingRef.current = false;
-      lastPointRef.current = null;
+      pointersRef.current.delete(e.pointerId);
       if (e.currentTarget.hasPointerCapture(e.pointerId)) {
         e.currentTarget.releasePointerCapture(e.pointerId);
+      }
+
+      if (pointersRef.current.size < 2) {
+        pinchRef.current = null;
+      }
+
+      if (pointersRef.current.size === 1) {
+        // One finger remains — resume panning from its current position.
+        const [remaining] = pointersRef.current.values();
+        draggingRef.current = true;
+        lastPointRef.current = remaining;
+      } else if (pointersRef.current.size === 0) {
+        draggingRef.current = false;
+        lastPointRef.current = null;
       }
     };
 
