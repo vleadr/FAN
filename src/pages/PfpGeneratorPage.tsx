@@ -101,7 +101,7 @@ export function PfpGeneratorPage() {
           onClick={handleDownload}
           disabled={isDownloading || !photoUrl}
         >
-          {isDownloading ? "جارِ التحضير…" : "⬇ تحميل الصورة الشخصية"}
+          {isDownloading ? "جارِ التحضير…" : "تحميل الصورة الشخصية"}
         </Button>
       </main>
     </div>

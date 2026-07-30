@@ -77,7 +77,7 @@ export function HeaderGeneratorPage() {
             onClick={handleDownload}
             disabled={isDownloading}
           >
-            {isDownloading ? "جارِ التحضير…" : "⬇ تحميل الهيدر"}
+            {isDownloading ? "جارِ التحضير…" : "تحميل الهيدر"}
           </Button>
         </div>
       </main>
