@@ -73,13 +73,21 @@ export function LandingPage() {
         </div>
       </main>
 
-      {import.meta.env.DEV && (
-        <footer className="px-4 pb-6 text-center text-xs text-sea-500">
+      <footer className="flex flex-col items-center gap-2 px-4 pb-6 text-center text-xs text-sea-500">
+        <a
+          href="https://peaksgg.com/ar/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-sea-700 hover:underline"
+        >
+          متجر بيكس
+        </a>
+        {import.meta.env.DEV && (
           <Link to="/admin" className="hover:underline">
             لوحة التحكم
           </Link>
-        </footer>
-      )}
+        )}
+      </footer>
     </div>
   );
 }
