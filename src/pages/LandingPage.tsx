@@ -33,7 +33,7 @@ export function LandingPage() {
           صيفية <span className="text-coral-500">بيكس</span>
         </h1>
         <p className="mt-4 max-w-xl text-base text-sea-700 sm:text-lg">
-          أنشئ الهيدر الخاص بك لرحلة البحر الأحمر أو بروفايل خلال ثوانٍ  مباشرة وجاهزة للتحميل.
+          تميز بهيدر خاص بك وصورة بروفايل لرحلة البحر الاحمر
         </p>
 
         <div className="mt-10 grid w-full max-w-3xl gap-6 sm:grid-cols-2">
@@ -73,21 +73,13 @@ export function LandingPage() {
         </div>
       </main>
 
-      <footer className="flex flex-col items-center gap-2 px-4 pb-6 text-center text-xs text-sea-500">
-        <a
-          href="https://peaksgg.com/ar/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-semibold text-sea-700 hover:underline"
-        >
-          متجر بيكس
-        </a>
-        {import.meta.env.DEV && (
+      {import.meta.env.DEV && (
+        <footer className="px-4 pb-6 text-center text-xs text-sea-500">
           <Link to="/admin" className="hover:underline">
             لوحة التحكم
           </Link>
-        )}
-      </footer>
+        </footer>
+      )}
     </div>
   );
 }
