@@ -38,6 +38,9 @@ export const NAME_BOX = {
 /** Shifts the creator cutout left of dead-center, leaving room for the name box on the right. */
 export const CREATOR_OFFSET_X_RATIO = -0.07;
 
+/** Scales the creator cutout down slightly, leaving a small gap above their head (bottom stays flush). */
+export const CREATOR_TOP_GAP_RATIO = 0.06;
+
 /**
  * Non-secure placeholder gate for /admin. Swap login()'s internals for a
  * real auth check later — the ProtectedRoute contract doesn't need to change.

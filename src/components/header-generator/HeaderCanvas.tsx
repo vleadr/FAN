@@ -7,6 +7,7 @@ import {
 } from "../../lib/canvasCompositor";
 import {
   CREATOR_OFFSET_X_RATIO,
+  CREATOR_TOP_GAP_RATIO,
   HEADER_EXPORT_HEIGHT,
   HEADER_EXPORT_WIDTH,
   NAME_BOX,
@@ -139,14 +140,17 @@ export const HeaderCanvas = forwardRef<HTMLCanvasElement, HeaderCanvasProps>(
         ctx.fillRect(0, 0, width, height);
       }
 
-      // Creator overlay layer — shifted slightly left of dead-center
+      // Creator overlay layer — shifted slightly left of dead-center, scaled down
+      // a touch so there's a small gap above their head (stays flush at the bottom)
+      const creatorY = height * CREATOR_TOP_GAP_RATIO;
+      const creatorH = height * (1 - CREATOR_TOP_GAP_RATIO);
       if (creatorImage === "missing" && creatorUrl) {
         const w = width * 0.4;
-        const h = height * 0.9;
+        const h = creatorH * 0.9;
         const x = (width - w) / 2 + width * CREATOR_OFFSET_X_RATIO;
-        drawMissingPlaceholder(ctx, creatorUrl, x, height - h, w, h);
+        drawMissingPlaceholder(ctx, creatorUrl, x, creatorY + creatorH - h, w, h);
       } else if (creatorImage && creatorImage !== "missing") {
-        drawImageContain(ctx, creatorImage, 0, 0, width, height, CREATOR_OFFSET_X_RATIO);
+        drawImageContain(ctx, creatorImage, 0, creatorY, width, creatorH, CREATOR_OFFSET_X_RATIO);
       }
 
       // Name tag: auto-fit bold white RTL text centered inside an invisible
