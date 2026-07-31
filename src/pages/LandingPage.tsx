@@ -27,17 +27,15 @@ export function LandingPage() {
       </div>
 
       <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center px-4 py-10 text-center sm:px-8">
-        <div className="mb-3 inline-flex items-center rounded-full bg-white/70 px-5 py-2.5 shadow-sm">
-          <img
-            src="/assets/branding/logos.png"
-            alt="Peaks × The Red Sea — البحر الأحمر"
-            width={475}
-            height={200}
-            loading="eager"
-            decoding="async"
-            className="h-16 w-auto object-contain"
-          />
-        </div>
+        <img
+          src="/assets/branding/logos.png"
+          alt="Peaks × The Red Sea — البحر الأحمر"
+          width={475}
+          height={200}
+          loading="eager"
+          decoding="async"
+          className="mb-3 h-28 w-auto object-contain"
+        />
         <h1 className="font-display text-4xl leading-tight font-black text-sea-950 sm:text-5xl md:text-6xl">
           صيفية <span className="text-coral-500">بيكس</span>
         </h1>
