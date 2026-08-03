@@ -61,5 +61,5 @@ export const ADMIN_PASSWORD = "peaks-summer";
 
 // Bumped when seed data changes shape/content so returning browsers re-seed
 // instead of keeping stale IndexedDB data from an older placeholder version.
-export const ASSET_STORE_KEY = "peaks:assets:v5";
+export const ASSET_STORE_KEY = "peaks:assets:v6";
 export const ADMIN_SESSION_KEY = "peaks:admin-session";

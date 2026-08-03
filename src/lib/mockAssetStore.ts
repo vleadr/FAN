@@ -22,6 +22,7 @@ function seedData(): AssetStoreData {
       { id: "creator-shehri", name: "عبدالرحمن الشهري", imageUrl: `${ASSET_PATHS.creators}/عبدالرحمن الشهري.webp` },
       { id: "creator-faisal", name: "فيصل", imageUrl: `${ASSET_PATHS.creators}/فيصل.webp` },
       { id: "creator-ko3ib", name: "كعيب", imageUrl: `${ASSET_PATHS.creators}/كعيب.webp` },
+      { id: "creator-nawaf", name: "نواف", imageUrl: `${ASSET_PATHS.creators}/نواف.webp` },
       { id: "creator-yazeed", name: "يزيد", imageUrl: `${ASSET_PATHS.creators}/يزيد.webp` },
     ],
     backgrounds: [
